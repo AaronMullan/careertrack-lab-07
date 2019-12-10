@@ -24,6 +24,9 @@ describe('app routes', () => {
       .post('/api/v1/recipes')
       .send({
         name: 'cookies',
+        ingredients: [
+          {amount: 5, measurement: 'tons', name: 'pig iron'}
+        ],
         directions: [
           'preheat oven to 375',
           'mix ingredients',
@@ -35,6 +38,7 @@ describe('app routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'cookies',
+          ingredients: [{ _id: expect.any(String), amount: 5, measurement: 'tons', name: 'pig iron' }],
           directions: [
             'preheat oven to 375',
             'mix ingredients',
@@ -65,9 +69,44 @@ describe('app routes', () => {
       });
   });
 
+  it('finds a recipe by id', async() => {
+    const recipe = await Recipe.create({
+      name: 'ultra cookies',
+      ingredients: [
+        {amount: 5, measurement: 'tons', name: 'pig iron'}
+      ],
+      directions: [
+        'preheat oven to 375',
+        'mix ingredients',
+        'put dough on cookie sheet',
+        'bake for 10 minutes'
+      ],
+    });
+
+    return request(app)
+      .get(`/api/v1/recipes/${recipe._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'ultra cookies',
+          ingredients: [{ _id: expect.any(String), amount: 5, measurement: 'tons', name: 'pig iron' }],
+          directions: [
+            'preheat oven to 375',
+            'mix ingredients',
+            'put dough on cookie sheet',
+            'bake for 10 minutes'
+          ],
+          __v: 0
+        });
+      });
+  });
+
   it('updates a recipe by id', async() => {
     const recipe = await Recipe.create({
       name: 'cookies',
+      ingredients: [
+        {amount: 5, measurement: 'tons', name: 'pig iron'}
+      ],
       directions: [
         'preheat oven to 375',
         'mix ingredients',
@@ -83,6 +122,38 @@ describe('app routes', () => {
         expect(res.body).toEqual({
           _id: expect.any(String),
           name: 'good cookies',
+          ingredients: [{ _id: expect.any(String), amount: 5, measurement: 'tons', name: 'pig iron' }],
+          directions: [
+            'preheat oven to 375',
+            'mix ingredients',
+            'put dough on cookie sheet',
+            'bake for 10 minutes'
+          ],
+          __v: 0
+        });
+      });
+  });
+  it('deletes a recipe by id', async() => {
+    const recipe = await Recipe.create({
+      name: 'mega cookies',
+      ingredients: [
+        {amount: 5, measurement: 'tons', name: 'pig iron'}
+      ],
+      directions: [
+        'preheat oven to 375',
+        'mix ingredients',
+        'put dough on cookie sheet',
+        'bake for 10 minutes'
+      ],
+    });
+
+    return request(app)
+      .delete(`/api/v1/recipes/${recipe._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          name: 'mega cookies',
+          ingredients: [{ _id: expect.any(String), amount: 5, measurement: 'tons', name: 'pig iron' }],
           directions: [
             'preheat oven to 375',
             'mix ingredients',
